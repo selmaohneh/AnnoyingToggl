@@ -12,6 +12,8 @@ Right after the meeting you notice your mistake, dammit! Now you have to manuall
 
 **AnnoyingToggl** reminds you every 5 minutes of your currently running timer by showing an annoying balloon notification to you. As long as you are sitting in front of your computer, you won't miss toggling again. :-)
 
+![](screen.JPG)
+
 ## Getting Started
 
 1. Download the [latest **AnnoyingToggl** release](https://github.com/selmaohneh/AnnoyingToggl/releases) or clone the repository and build the project yourself!
