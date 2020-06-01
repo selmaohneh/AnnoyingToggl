@@ -22,8 +22,9 @@ namespace AnnoyingToggl
         {
             while (true)
             {
-                List<TimeEntry> timeEntries;
+                await Task.Delay(interval);
 
+                List<TimeEntry> timeEntries = new List<TimeEntry>();
                 try
                 {
                     timeEntries = _timeEntryService.List();
@@ -32,7 +33,7 @@ namespace AnnoyingToggl
                 {
                     _balloonNotification.Show("Could not retrieve time entries from Toggl.",
                         "Make sure your internet connection is up and your Toggl API key is valid.");
-                    return;
+                    continue;
                 }
 
                 var currentEntry = timeEntries.SingleOrDefault(x => x.Duration < 0);
@@ -40,14 +41,18 @@ namespace AnnoyingToggl
                 if (currentEntry == null)
                 {
                     _balloonNotification.Show("You have no active timer at the moment.", "Toggl your work now!");
-                }
-                else
-                {
-                    _balloonNotification.Show(currentEntry.Description,
-                        "That's not what you are doing right now? Toggl your work now!");
+                    continue;
                 }
 
-                await Task.Delay(interval);
+                if (string.IsNullOrWhiteSpace(currentEntry.Description))
+                {
+                    _balloonNotification.Show("Your active timer has no description.",
+                        "Better add one now!");
+                    continue;
+                }
+
+                _balloonNotification.Show(currentEntry.Description,
+                    "That's not what you are doing right now? Toggl your work now!");
             }
         }
     }

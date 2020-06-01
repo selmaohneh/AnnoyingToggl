@@ -51,6 +51,45 @@ namespace AnnoyingTogglTests
         }
 
         [TestMethod]
+        public async Task StartAnnoyService_RunningTimer_NoDescription_BalloonDescription()
+        {
+            var timeEntries = new List<TimeEntry>
+            {
+                new TimeEntry
+                {
+                    Duration = 99,
+                    Description = "Watching Little Britain."
+                },
+
+                new TimeEntry
+                {
+                    Duration = -42,
+                    Description = null
+                },
+
+                new TimeEntry
+                {
+                    Duration = 42,
+                    Description = "Drinking coffee."
+                }
+            };
+            var timeEntryService = new Mock<ITimeEntryService>();
+            timeEntryService.Setup(x => x.List()).Returns(timeEntries);
+
+            var balloonNotification = new Mock<IBalloonNotification>();
+
+            var sut = new AnnoyService(timeEntryService.Object, balloonNotification.Object);
+
+            sut.Start(TimeSpan.FromSeconds(1));
+
+            await Task.Delay(TimeSpan.FromSeconds(1));
+
+            balloonNotification.Verify(x =>
+                x.Show("Your active timer has no description.",
+                    "Better add one now!"));
+        }
+
+        [TestMethod]
         public async Task StartAnnoyService_NoRunningTimer_BalloonDescription()
         {
             var timeEntries = new List<TimeEntry>
@@ -93,7 +132,7 @@ namespace AnnoyingTogglTests
 
             sut.Start(TimeSpan.FromSeconds(1));
 
-            await Task.Delay(TimeSpan.FromSeconds(1));
+            await Task.Delay(TimeSpan.FromSeconds(5));
 
             balloonNotification.Verify(x =>
                 x.Show("Could not retrieve time entries from Toggl.",
